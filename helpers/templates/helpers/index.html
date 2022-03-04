@@ -1,0 +1,17 @@
+{% extends 'helpers/base.html' %}
+{% block contents %}
+    {{ websocket_helpers_scripts }}
+
+
+
+    <h1>Testing websockets</h1>
+        <h3>Below you will get a message from celery</h3>
+
+        <div id="celery_div"></div>
+    <h3>Below you will get a message from the control page</h3>
+
+    click <a href="{% url 'control_index' %}" target="_blank">here</a> to go the control page.
+
+    <div id="control_div"></div>
+
+{% endblock %}

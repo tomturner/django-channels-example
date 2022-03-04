@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-94=1j=n6rby0fglmw_%@#_n8oe65+q=flh8hd%lf8!qm%4cjhz'
+SECRET_KEY = 'django-insecure-95=1j=n6rby0fglmw_%@#_n8oe65+q=flh8hd%lf8!qm%4cjhz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,8 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'chat.apps.ChatConfig',
+    'django_celery_beat',
     'channels',
+    'ajax_helpers',
+    'django_modals',
+    'django_menus',
+    'helpers',
 ]
 
 MIDDLEWARE = [
@@ -78,8 +82,12 @@ ASGI_APPLICATION = 'core.asgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DATABASE_NAME', 'example'),
+        'USER': os.getenv('POSTGRES_DATABASE_USER', 'example'),
+        'PASSWORD': os.getenv('POSTGRES_DATABASE_PASSWORD', 'example123'),
+        'HOST': os.getenv('POSTGRES_DATABASE_HOST', '127.0.0.1'),
+        'PORT': os.getenv('POSTGRES_DATABASE_PORT', '5432')
     }
 }
 
@@ -125,11 +133,17 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+REDIS_PORT = os.getenv('REDIS_PORT', '6379')
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+
+CELERY_BROKER_URL = "redis://%s:%s" % (REDIS_HOST, REDIS_PORT)
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [(REDIS_HOST, int(REDIS_PORT))],
         },
     },
 }

@@ -1,0 +1,68 @@
+version: '3.7'
+x-django: &django
+  build: .
+  environment:
+     - DJANGO_SETTINGS_MODULE=core.settings
+     - POSTGRES_DATABASE_HOST=db
+     - POSTGRES_DATABASE_NAME=example
+     - POSTGRES_DATABASE_USER=example
+     - POSTGRES_DATABASE_PORT=5432
+     - POSTGRES_PASSWORD=example123
+     - REDIS_HOST=redis
+     - REDIS_PORT=6380
+  volumes:
+    - .:/code
+  depends_on:
+    - db
+    - redis
+services:
+  redis:
+    image: redis:6.0.10
+    command: --port 6380
+    ports:
+      - "6380:6380"
+  web:
+    <<: *django
+    container_name: example
+    image: example
+    command: bash -c "export GIT_REVISION=$$(git --git-dir /code/.git rev-parse HEAD) && cd /code/ && daphne -b 0.0.0.0 -p 8091 core.asgi:application"
+    ports:
+      - "8090:8090"
+      - "8091:8091"
+    depends_on:
+      - redis
+      - db
+      - celery
+      - celery-beat
+      - flower
+  db:
+    image: kartoza/postgis:13-3.1
+    container_name: example_db
+    environment:
+      - POSTGRES_DBNAME=example
+      - POSTGRES_USER=example
+      - POSTGRES_PASSWORD=example123
+    ports:
+      - "5433:5432"
+    volumes:
+      - example_postgres_database:/var/lib/postgresql
+  celery:
+    <<: *django
+    container_name: example_celery
+    image: example_celery
+    command: bash -c "cd /code/ && celery -A core worker -l info"
+  celery-beat:
+    <<: *django
+    container_name: example_celery_beat
+    image: example_celery_beat
+    command: bash -c "cd /code/ && celery -A core beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler --pidfile /tmp/celerybeat.pid -s /tmp/celerybeat-schedule"
+  flower:
+    image: mher/flower
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6380/0
+      - FLOWER_PORT=8889
+    ports:
+      - 8889:8889
+volumes:
+    example_postgres_database:
+        external: true

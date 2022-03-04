@@ -1,0 +1,13 @@
+{% extends 'helpers/base.html' %}
+{% load static ajax_helpers %}
+
+{% block contents %}
+
+        <hr>
+        <p>Sends a message to websockets</p>
+        {% ajax_button 'Websocket message' 'test_websocket' %}
+        <hr>
+         {% ajax_button 'Websocket hello world' 'test_websocket2' %}
+         {% ajax_button 'Run celery task' 'test_celery' %}
+
+{% endblock %}
