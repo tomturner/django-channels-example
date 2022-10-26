@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from ajax_helpers.mixins import AjaxHelpers
+from ajax_helpers.utils import toast_commands
 from ajax_helpers.websockets.mixin import WebsocketHelpers
 from django.views.generic import TemplateView
 
@@ -12,7 +13,8 @@ class MainView(WebsocketHelpers, AjaxHelpers, TemplateView):
 
     def get_context_data(self, **kwargs):
         self.add_channel('main')
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs) if hasattr(super(), 'get_context_data') else {}
+        return context
 
 
 class ControlView(WebsocketHelpers, AjaxHelpers, TemplateView):
@@ -29,7 +31,12 @@ class ControlView(WebsocketHelpers, AjaxHelpers, TemplateView):
         self.send_ws_commands('main', 'message', text='Hello world')
         return self.command_response()
 
+    def button_test_toast(self):
+        self.send_ws_commands('main', toast_commands(header='Information',
+                                                     text=f'toast message',
+                                                     position='bottom-right'))
+        return self.command_response()
+
     def button_test_celery(self):
         channel_example.delay()
         return self.command_response()
-

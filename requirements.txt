@@ -7,4 +7,4 @@ celery==5.2.3
 django-celery-beat==2.2.1
 psycopg2-binary==2.9.3
 redis==4.1.0
-git+https://github.com/jonesim/ajax-helpers.git@b343dc7997ebbddd91ce76cff1fe7ed377bafcd0
+git+https://github.com/jonesim/ajax-helpers.git@2c29fc8868801ef464aa8e1c8cae952913d4bef4
