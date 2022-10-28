@@ -2,7 +2,7 @@ Django==3.2.12
 channels==3.0.4
 channels-redis==3.3.1
 git+https://github.com/jonesim/django-menus.git@badccaee168b3452dca7f39bf91a444106b64cf1
-django-nested-modals==0.0.17
+django-nested-modals==0.0.21
 celery==5.2.3
 django-celery-beat==2.2.1
 psycopg2-binary==2.9.3
