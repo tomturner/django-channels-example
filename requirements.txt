@@ -5,6 +5,6 @@ git+https://github.com/jonesim/django-menus.git@badccaee168b3452dca7f39bf91a4441
 django-nested-modals==0.0.17
 celery==5.2.3
 django-celery-beat==2.2.1
-psycopg2-binary==2.9.3
+psycopg2-binary==2.9.6
 redis==4.1.0
 git+https://github.com/jonesim/ajax-helpers.git@2c29fc8868801ef464aa8e1c8cae952913d4bef4
